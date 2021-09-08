@@ -3,6 +3,7 @@ require "dungeon/point"
 local delaunay = require "dungeon/delaunay"
 local mst = require 'dungeon/mst'
 local path = require 'dungeon/path'
+local tools = require 'dungeon/tools'
 
 Dungeon = Object:extend()
 
@@ -133,41 +134,6 @@ function Dungeon:draw_map()
     end
 end
 
-function Dungeon:line(ox,oy,ex,ey)
-    local dx = math.abs( ex - ox )
-    local dy = math.abs( ey - oy ) * -1
-
-    local sx = ox < ex and 1 or -1
-    local sy = oy < ey and 1 or -1
-    local err = dx + dy
-
-    local path = {}
-
-    while true do
-
-        table.insert(path,Point(ox,oy))
-
-        if ox == ex and oy == ey then
-            return path
-        end
-
-        local tmpErr = 2 * err
-        if tmpErr > dy then
-            err = err + dy
-            ox = ox + sx
-        end
-        if tmpErr < dx then
-            err = err + dx
-            oy = oy + sy
-        end
-    end
-end
-
-function Dungeon:merge_path(path, merge)
-    for _,point in pairs(merge) do
-        table.insert(path, point)
-    end
-end
 
 function Dungeon:generate_map()
     local last_container_count = 0
@@ -214,19 +180,19 @@ function Dungeon:generate_map()
         local path = {}
 
         if love.math.random(0,1) then
-            self:merge_path(path,self:line(start.x, start.y, midpoint.x, start.y))
-            self:merge_path(path,self:line(midpoint.x, start.y, midpoint.x, midpoint.y))
+            tools.merge_path(path,tools.line(start.x, start.y, midpoint.x, start.y))
+            tools.merge_path(path,tools.line(midpoint.x, start.y, midpoint.x, midpoint.y))
         else
-            self:merge_path(path,self:line(start.x, start.y, start.x, midpoint.y))
-            self:merge_path(path,self:line(start.x, midpoint.y, midpoint.x, midpoint.y))
+            tools.merge_path(path,tools.line(start.x, start.y, start.x, midpoint.y))
+            tools.merge_path(path,tools.line(start.x, midpoint.y, midpoint.x, midpoint.y))
         end
 
         if love.math.random(0,1) then
-            self:merge_path(path,self:line(midpoint.x,midpoint.y, goal.x, midpoint.y ))
-            self:merge_path(path,self:line(goal.x, midpoint.y, goal.x, goal.y))
+            tools.merge_path(path,tools.line(midpoint.x,midpoint.y, goal.x, midpoint.y ))
+            tools.merge_path(path,tools.line(goal.x, midpoint.y, goal.x, goal.y))
         else
-            self:merge_path(path,self:line(midpoint.x,midpoint.y, midpoint.x, goal.y ))
-            self:merge_path(path,self:line(midpoint.x, goal.y, goal.x, goal.y))
+            tools.merge_path(path,tools.line(midpoint.x,midpoint.y, midpoint.x, goal.y ))
+            tools.merge_path(path,tools.line(midpoint.x, goal.y, goal.x, goal.y))
         end
 
         for _,node in pairs(path) do

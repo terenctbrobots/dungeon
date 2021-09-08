@@ -1,4 +1,6 @@
 require "dungeon/point"
+require "enum"
+require "dungeon/room"
 
 local delaunay = require "dungeon/delaunay"
 local mst = require 'dungeon/mst'
@@ -7,10 +9,7 @@ local tools = require 'dungeon/tools'
 
 Dungeon = Object:extend()
 
-require "enum"
-
-require "dungeon/room"
-
+-- Some constants for room generation
 local min_boundary_size = 10
 local min_boundary_multipler = 2
 
@@ -36,8 +35,6 @@ function Dungeon:new(width, height, max_rooms)
         })
         count = count - 1
     end
-
-
 end
 
 function Dungeon:get_type(x,y)
@@ -201,7 +198,6 @@ function Dungeon:generate_map()
                 self:set_type(node.x,node.y,self.map_types.hall)
             end 
         end
-
     end
 
     -- Use A star, but it has twisty coordiors

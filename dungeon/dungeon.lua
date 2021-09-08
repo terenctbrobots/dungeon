@@ -12,7 +12,7 @@ Dungeon = Object:extend()
 -- Some constants for room generation
 local min_boundary_size = 10
 local min_boundary_multipler = 2
-
+local percent_existing_corridor = 15
 
 function Dungeon:new(width, height, max_rooms)
     self.width = width
@@ -24,7 +24,7 @@ function Dungeon:new(width, height, max_rooms)
     self.points = {}
     self.triangles = nil
 
-    self.map_types = enum({"wall","room","hall"})
+    self.map_types = enum({"wall","room","corridor"})
 
     self.grid = {}
     local count = width * height
@@ -120,7 +120,7 @@ function Dungeon:draw_map()
             grid_type = self:get_type(x,y)
             if grid_type == self.map_types.room then
                 love.graphics.setColor(255,0,0,255)
-            elseif grid_type == self.map_types.hall then
+            elseif grid_type == self.map_types.corridor then
                 love.graphics.setColor(0,0,255,255)
             else
                 love.graphics.setColor(0,0,0,255)
@@ -166,8 +166,20 @@ function Dungeon:generate_map()
     self.tree = mst.tree(self.edges[1].p1, self.edges)
 
     -- Add all mst edges in and path find to them
-    selected_edges = self.tree
+    local selected_edges = self.tree
     -- Add random remaining edges as well 
+    for _,edge in pairs(self.edges) do
+        for _,selected in pairs(selected_edges) do
+            if edge:same(selected) then
+                goto skip
+            end
+        end
+
+        if love.math.random(1,100) <= percent_existing_corridor then
+            table.insert(selected_edges, edge)
+        end
+    ::skip::
+    end
 
     for _, edge in pairs(selected_edges) do
         local start = edge.p1 
@@ -177,25 +189,25 @@ function Dungeon:generate_map()
         local path = {}
 
         if love.math.random(0,1) then
-            tools.merge_path(path,tools.line(start.x, start.y, midpoint.x, start.y))
-            tools.merge_path(path,tools.line(midpoint.x, start.y, midpoint.x, midpoint.y))
+            tools.merge(path,tools.line(start.x, start.y, midpoint.x, start.y))
+            tools.merge(path,tools.line(midpoint.x, start.y, midpoint.x, midpoint.y))
         else
-            tools.merge_path(path,tools.line(start.x, start.y, start.x, midpoint.y))
-            tools.merge_path(path,tools.line(start.x, midpoint.y, midpoint.x, midpoint.y))
+            tools.merge(path,tools.line(start.x, start.y, start.x, midpoint.y))
+            tools.merge(path,tools.line(start.x, midpoint.y, midpoint.x, midpoint.y))
         end
 
         if love.math.random(0,1) then
-            tools.merge_path(path,tools.line(midpoint.x,midpoint.y, goal.x, midpoint.y ))
-            tools.merge_path(path,tools.line(goal.x, midpoint.y, goal.x, goal.y))
+            tools.merge(path,tools.line(midpoint.x,midpoint.y, goal.x, midpoint.y ))
+            tools.merge(path,tools.line(goal.x, midpoint.y, goal.x, goal.y))
         else
-            tools.merge_path(path,tools.line(midpoint.x,midpoint.y, midpoint.x, goal.y ))
-            tools.merge_path(path,tools.line(midpoint.x, goal.y, goal.x, goal.y))
+            tools.merge(path,tools.line(midpoint.x,midpoint.y, midpoint.x, goal.y ))
+            tools.merge(path,tools.line(midpoint.x, goal.y, goal.x, goal.y))
         end
 
         for _,node in pairs(path) do
 --            print(node)
             if self:get_type(node.x,node.y) == self.map_types.wall then
-                self:set_type(node.x,node.y,self.map_types.hall)
+                self:set_type(node.x,node.y,self.map_types.corridor)
             end 
         end
     end
@@ -211,7 +223,7 @@ function Dungeon:generate_map()
 --         -- print("goal")
 --         -- print(goal)
 
---         local hallway = path.find(start, goal, self, function (a , b) 
+--         local corridorway = path.find(start, goal, self, function (a , b) 
 --             local path_cost = {}
 --             path_cost.cost = b.position:dist(goal)
 
@@ -222,7 +234,7 @@ function Dungeon:generate_map()
 --                 path_cost.cost = path_cost.cost + 10
 --             elseif  grid_type == self.map_types.wall then
 --                 path_cost.cost = path_cost.cost + 5
---             elseif grid_type == self.map_types.hall then
+--             elseif grid_type == self.map_types.corridor then
 --                 path_cost.cost = path_cost.cost + 1
 --             end
 
@@ -232,15 +244,15 @@ function Dungeon:generate_map()
 --         end
 --         )
 
---         for _,node in pairs(hallway) do
+--         for _,node in pairs(corridorway) do
 -- --            print(node)
 --             if self:get_type(node.x,node.y) == self.map_types.wall then
---                 self:set_type(node.x,node.y,self.map_types.hall)
+--                 self:set_type(node.x,node.y,self.map_types.corridor)
 --             end 
 --         end
 --     end
 
---    print(hallway)
+--    print(corridorway)
 
 
 end

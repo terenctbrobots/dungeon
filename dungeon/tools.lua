@@ -31,9 +31,9 @@ function Tools.line(ox,oy,ex,ey)
     end
 end
 
-function Tools.merge_path(path, merge)
-    for _,point in pairs(merge) do
-        table.insert(path, point)
+function Tools.merge(nodes, merge)
+    for _,node in pairs(merge) do
+        table.insert(nodes, node)
     end
 end
 

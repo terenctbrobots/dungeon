@@ -1,5 +1,4 @@
 local delaunay = require "dungeon/delaunay"
-local Point = delaunay.Point
 
 Room = Object:extend()
 

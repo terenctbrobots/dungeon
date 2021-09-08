@@ -1,6 +1,5 @@
 
 local delaunay = require "dungeon/delaunay"
-local Point = delaunay.Point -- Refactor points and edge to its own class
 
 path = {}
 

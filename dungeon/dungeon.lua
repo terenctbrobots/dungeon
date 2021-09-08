@@ -1,6 +1,6 @@
+require "dungeon/point"
 
 local delaunay = require "dungeon/delaunay"
-local Point = delaunay.Point
 local mst = require 'dungeon/mst'
 local path = require 'dungeon/path'
 

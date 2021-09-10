@@ -100,6 +100,7 @@ function Dungeon:split()
     end
 end
 
+--- These draw functions are just for visualization
 function Dungeon:draw_triangles()
     for _,triangle in pairs(self.triangles) do
         love.graphics.setColor(0,0,255,255)
@@ -113,7 +114,7 @@ function Dungeon:draw_triangles()
 end
 
 function Dungeon:draw_tree()
-    for _,edge in pairs(self.tree) do
+    for _,edge in pairs(self.mst) do
         love.graphics.setColor(255,255,255,255)
         love.graphics.line(
             edge.p1.x*5,
@@ -173,10 +174,10 @@ function Dungeon:generate_map()
         end
     end
 
-    self.tree = mst.tree(self.edges[1].p1, self.edges)
+    self.mst = mst.tree(self.edges[1].p1, self.edges)
 
     -- Add all mst edges in and path find to them
-    local selected_edges = self.tree
+    local selected_edges = self.mst
     -- Add random remaining edges as well 
     for _,edge in pairs(self.edges) do
         for _,selected in pairs(selected_edges) do

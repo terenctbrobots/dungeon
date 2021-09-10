@@ -3,8 +3,6 @@
 -- the ability to specify the 'costs' depending on 
 -- the grid type.
 
-local delaunay = require "dungeon/delaunay"
-
 path = {}
 
 function path.find(start, goal, dungeon, cost_function) 
@@ -19,6 +17,7 @@ function path.find(start, goal, dungeon, cost_function)
 
     local node_grid = {}
 
+    -- Refactor me please?
     for y = 0, dungeon.height - 1 , 1 do
         for x = 0, dungeon.width - 1, 1 do
             table.insert(node_grid, {
@@ -55,6 +54,7 @@ function path.find(start, goal, dungeon, cost_function)
                 goto continue
             end
 
+            -- This needs to be fix...but don't use a*star? so why bother.
             local neighbour = node_grid[ (node.position.y + offset[2]) * dungeon.width + node.position.x + offset[1] + 1]
 
             if contains_node(closed_set, neighbour) then

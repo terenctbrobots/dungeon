@@ -9,7 +9,7 @@ The current system generates a series of connected rooms given a width,height an
 2) Create random sized rooms in the containers
 3) Does a delauney triangulation to find all possible connection(edges)  to each room center
 4) Does a Minimum Spanning Tree(MST) to determine which edges are needed to connect all rooms
-5) Connects each room up using a simple L method so that corridors are angular (There is an alternate A*Star pathfinding routine but it is slow and generate curvy cooridors)
+5) Connects each room up using a simple L method so that corridors are angular (There is an alternate A*Star pathfinding routine but it is slow and generates curvy corridors)
 
 The code uses the following LUA code:
 1) a modified Delaunay library by Roland Yonaba (https://github.com/Yonaba/delaunay)

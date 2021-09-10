@@ -1,6 +1,7 @@
 Tools = {}
 
-
+-- Use Brensenham's line algorithm to crate a table
+-- of points between ox,oy and ex,ey
 function Tools.line(ox,oy,ex,ey)
     local dx = math.abs( ex - ox )
     local dy = math.abs( ey - oy ) * -1

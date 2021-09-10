@@ -1,3 +1,7 @@
+-- This is a highly inefficient A*Star pathfinding 
+-- function that finds the path to a goal with 
+-- the ability to specify the 'costs' depending on 
+-- the grid type.
 
 local delaunay = require "dungeon/delaunay"
 

@@ -1,3 +1,6 @@
+--- Minimum Spanning Tree 
+--- Take a series of edges and determine which edges are essential
+--- to have fully connect path.
 Mst = {}
 
 function Mst.tree(start, edges) 

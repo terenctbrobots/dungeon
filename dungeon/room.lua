@@ -1,5 +1,3 @@
-local delaunay = require "dungeon/delaunay"
-
 Room = Object:extend()
 
 function Room:new(container)

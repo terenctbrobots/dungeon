@@ -19,19 +19,6 @@ local remove       = table.remove
 local sqrt         = math.sqrt
 local max          = math.max
 
--- Internal class constructor
-local class = function(...)
-  local klass = {}
-  klass.__index = klass
-  klass.__call = function(_,...) return klass:new(...) end
-  function klass:new(...)
-    local instance = setmetatable({}, klass)
-    klass.__init(instance, ...)
-    return instance
-  end
-  return setmetatable(klass,{__call = klass.__call})
-end
-
 -- Triangle semi-perimeter by Heron's formula
 local function quatCross(a, b, c)
   local p = (a + b + c) * (a + b - c) * (a - b + c) * (-a + b + c)
@@ -59,11 +46,7 @@ end
 --- `Triangle` class
 -- @type Triangle
 
-local Triangle = class()
-Triangle.__tostring = function(t)
-  return (('Triangle: \n  %s\n  %s\n  %s')
-    :format(tostring(t.p1), tostring(t.p2), tostring(t.p3)))
-end
+Triangle = Object:extend()
 
 --- Creates a new `Triangle`
 -- @name Triangle:new
@@ -79,11 +62,16 @@ end
 -- local t = Triangle(p1, p2, p3) -- Alias to Triangle.new
 -- print(t) -- print the triangle members p1, p2 and p3
 --
-function Triangle:__init(p1, p2, p3)
+function Triangle:new(p1, p2, p3)
   assert(not isFlatAngle(p1, p2, p3), ("angle (p1, p2, p3) is flat:\n  %s\n  %s\n  %s")
     :format(tostring(p1), tostring(p2), tostring(p3)))
   self.p1, self.p2, self.p3 = p1, p2, p3
   self.e1, self.e2, self.e3 = Edge(p1, p2), Edge(p2, p3), Edge(p3, p1)
+end
+
+function Triangle:__tostring() 
+  return (('Triangle: \n  %s\n  %s\n  %s')
+    :format(tostring(self.p1), tostring(self.p2), tostring(self.p3)))
 end
 
 --- Checks if the triangle is defined clockwise (sequence p1-p2-p3)

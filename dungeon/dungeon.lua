@@ -13,6 +13,7 @@ Dungeon = Object:extend()
 local min_boundary_size = 10
 local min_boundary_multipler = 2
 local percent_existing_corridor = 15
+local scale = 5
 
 function Dungeon:new(width, height, max_rooms)
     self.width = width
@@ -82,7 +83,7 @@ function Dungeon:split()
         return (container1.w * container1.h) > (container2.w * container2.h)
     end)
 
-    if love.math.random(0,1) == 0 then
+    if love.math.random(1,100) <= 50 then
         -- split vertically
         if self.containers[1].w > min_boundary_size * min_boundary_multipler then
             self:split_vertical()
@@ -102,19 +103,28 @@ end
 function Dungeon:draw_triangles()
     for _,triangle in pairs(self.triangles) do
         love.graphics.setColor(0,0,255,255)
-        love.graphics.polygon("line", triangle:getVertices())
+        local coords = triangle:getVertices()
+        local scaled={}
+        for _,coord in pairs(coords) do
+            table.insert(scaled, coord * scale)
+        end
+        love.graphics.polygon("line", scaled)
     end
 end
 
 function Dungeon:draw_tree()
     for _,edge in pairs(self.tree) do
-        love.graphics.setColor(255,0,0,255)
-        love.graphics.line(edge.p1.x,edge.p1.y,edge.p2.x,edge.p2.y)
+        love.graphics.setColor(255,255,255,255)
+        love.graphics.line(
+            edge.p1.x*5,
+            edge.p1.y*5,
+            edge.p2.x*5,
+            edge.p2.y*5)
     end
 end
 
 function Dungeon:draw_map()
-    love.graphics.setPointSize(5)
+    love.graphics.setPointSize(scale)
     for y = 0, self.height - 1, 1 do
         for x = 0, self.width - 1, 1 do
             grid_type = self:get_type(x,y)
@@ -126,7 +136,7 @@ function Dungeon:draw_map()
                 love.graphics.setColor(0,0,0,255)
             end
 
-            love.graphics.points({x*5,y*5})
+            love.graphics.points({x*scale,y*scale})
         end
     end
 end
@@ -257,18 +267,27 @@ function Dungeon:generate_map()
 
 end
 
-function Dungeon:draw(container)
+function Dungeon:draw(display)
     -- local container = self.containers[container]
 
     -- love.graphics.setColor( 255, 0, 0, 255 )
     -- love.graphics.rectangle( "line", container.x, container.y, container.w, container.h )
-    -- for i = 1, #self.rooms, 1 do
-    --     self.rooms[i]:draw()
-    -- end
+    if display.grid then
+        self:draw_map()
+    else 
+        for i = 1, #self.rooms, 1 do
+            self.rooms[i]:draw(scale)
+        end
+    end
 
-    --self:draw_triangles()
-    --self:draw_tree()
-    self:draw_map()
+    if display.tri then
+        self:draw_triangles()
+    end
+
+    if display.mst then
+        self:draw_tree()
+    end
+
 end
 
 function Dungeon:__tostring()

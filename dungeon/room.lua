@@ -47,7 +47,9 @@ function Room:update_grid(grid)
     end
 end
 
-function Room:draw()
-    love.graphics.setColor( 0, 255, 0, 255 )
-    love.graphics.rectangle( "fill", self.x, self.y, self.w, self.h )
+function Room:draw(scale)
+    love.graphics.setColor( 0, 255, 0, 255)
+    love.graphics.rectangle("line", self.container.x*scale, self.container.y*scale, self.container.w*scale, self.container.h*scale)
+    love.graphics.setColor( 255, 0, 0, 255 )
+    love.graphics.rectangle( "fill", self.x*scale, self.y* scale, self.w*scale, self.h*scale )
 end

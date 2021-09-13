@@ -40,11 +40,11 @@ function Dungeon:new(width, height, max_rooms)
     end
 end
 
-function Dungeon:get_type(x,y)
+function Dungeon:getType(x,y)
     return self.tile[(y*self.width) + (x + 1)].tile_type
 end
 
-function Dungeon:set_type(x,y, new_type)
+function Dungeon:setType(x,y, new_type)
     self.tile[(y*self.width) + (x+1)].tile_type = new_type
 end
 
@@ -61,7 +61,7 @@ function Dungeon:bounds( position )
     return true
 end
 
-function Dungeon:split_vertical()
+function Dungeon:splitVertical()
     local random_width = math.random(min_boundary_size, self.bounds[1].w - min_boundary_size)
     self.bounds[#self.bounds+1] = { x = random_width + self.bounds[1].x,
                                   y = self.bounds[1].y,
@@ -70,7 +70,7 @@ function Dungeon:split_vertical()
     self.bounds[1].w = random_width
 end
 
-function Dungeon:split_horizontal()
+function Dungeon:splitHorizontal()
     local random_height = math.random(min_boundary_size,self.bounds[1].h - min_boundary_size)
     self.bounds[#self.bounds+1] = { x = self.bounds[1].x,
                                   y = random_height + self.bounds[1].y,
@@ -88,22 +88,22 @@ function Dungeon:split()
     if love.math.random(1,100) <= 50 then
         -- split vertically
         if self.bounds[1].w > min_boundary_size * min_boundary_multipler then
-            self:split_vertical()
+            self:splitVertical()
         elseif self.bounds[1].h > min_boundary_size * min_boundary_multipler then
-            self:split_horizontal()
+            self:splitHorizontal()
         end 
     else
         -- split horizontal
         if self.bounds[1].h > min_boundary_size * min_boundary_multipler then
-            self:split_horizontal()
+            self:splitHorizontal()
         elseif self.bounds[1].w > min_boundary_size * min_boundary_multipler then
-            self:split_vertical()
+            self:splitVertical()
         end    
     end
 end
 
 --- These draw functions are just for visualization
-function Dungeon:draw_triangles()
+function Dungeon:drawTriangles()
     for _,triangle in pairs(self.triangles) do
         love.graphics.setColor(0,0,255,255)
         local coords = triangle:getVertices()
@@ -115,7 +115,7 @@ function Dungeon:draw_triangles()
     end
 end
 
-function Dungeon:draw_tree()
+function Dungeon:drawMst()
     for _,edge in pairs(self.mst) do
         love.graphics.setColor(255,255,255,255)
         love.graphics.line(
@@ -126,11 +126,11 @@ function Dungeon:draw_tree()
     end
 end
 
-function Dungeon:draw_map()
+function Dungeon:drawMap()
     love.graphics.setPointSize(scale)
     for y = 0, self.height - 1, 1 do
         for x = 0, self.width - 1, 1 do
-            tile_type = self:get_type(x,y)
+            tile_type = self:getType(x,y)
             if tile_type == self.map_types.room then
                 love.graphics.setColor(255,0,0,255)
             elseif tile_type == self.map_types.corridor then
@@ -145,7 +145,7 @@ function Dungeon:draw_map()
 end
 
 
-function Dungeon:generate_map()
+function Dungeon:generateMap()
     local last_bound_count = 0
     repeat
         last_bound_count = #self.bounds
@@ -219,8 +219,8 @@ function Dungeon:generate_map()
 
         for _,node in pairs(path) do
 --            print(node)
-            if self:get_type(node.x,node.y) == self.map_types.wall then
-                self:set_type(node.x,node.y,self.map_types.corridor)
+            if self:getType(node.x,node.y) == self.map_types.wall then
+                self:setType(node.x,node.y,self.map_types.corridor)
             end 
         end
     end
@@ -241,7 +241,7 @@ function Dungeon:generate_map()
 --             path_cost.cost = b.position:dist(goal)
 
 --     --        print(b.position)
---             local tile_type = self:get_type(b.position.x, b.position.y)
+--             local tile_type = self:getType(b.position.x, b.position.y)
 
 --             if tile_type == self.map_types.room then 
 --                 path_cost.cost = path_cost.cost + 10
@@ -259,8 +259,8 @@ function Dungeon:generate_map()
 
 --         for _,node in pairs(corridorway) do
 -- --            print(node)
---             if self:get_type(node.x,node.y) == self.map_types.wall then
---                 self:set_type(node.x,node.y,self.map_types.corridor)
+--             if self:getType(node.x,node.y) == self.map_types.wall then
+--                 self:setType(node.x,node.y,self.map_types.corridor)
 --             end 
 --         end
 --     end
@@ -276,7 +276,7 @@ function Dungeon:draw(display)
     -- love.graphics.setColor( 255, 0, 0, 255 )
     -- love.graphics.rectangle( "line", bound.x, bound.y, bound.w, bound.h )
     if display.tile then
-        self:draw_map()
+        self:drawMap()
     else 
         for i = 1, #self.rooms, 1 do
             self.rooms[i]:draw(scale)
@@ -284,11 +284,11 @@ function Dungeon:draw(display)
     end
 
     if display.tri then
-        self:draw_triangles()
+        self:drawTriangles()
     end
 
     if display.mst then
-        self:draw_tree()
+        self:drawMst()
     end
 
 end

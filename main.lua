@@ -15,7 +15,7 @@ local display = {
 
 function love.load()
     dungeon = Dungeon(width,height,rooms)
-    dungeon:generate_map()
+    dungeon:generateMap()
 end
 
 function love.update(dt)
@@ -46,7 +46,7 @@ function love.keyreleased(key)
 
     if key == 'r' then
         dungeon = Dungeon(width, height, rooms)
-        dungeon:generate_map()
+        dungeon:generateMap()
     end
 
     if key == 't' then

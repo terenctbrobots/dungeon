@@ -1,7 +1,7 @@
 -- This is a highly inefficient A*Star pathfinding 
 -- function that finds the path to a goal with 
 -- the ability to specify the 'costs' depending on 
--- the grid type.
+-- the tile type.
 
 path = {}
 
@@ -15,12 +15,12 @@ function path.find(start, goal, dungeon, cost_function)
         {0,-1}
     }
 
-    local node_grid = {}
+    local node_tile = {}
 
     -- Refactor me please?
     for y = 0, dungeon.height - 1 , 1 do
         for x = 0, dungeon.width - 1, 1 do
-            table.insert(node_grid, {
+            table.insert(node_tile, {
                 position = Point(x, y),
                 cost = 100000
             })
@@ -55,7 +55,7 @@ function path.find(start, goal, dungeon, cost_function)
             end
 
             -- This needs to be fix...but don't use a*star? so why bother.
-            local neighbour = node_grid[ (node.position.y + offset[2]) * dungeon.width + node.position.x + offset[1] + 1]
+            local neighbour = node_tile[ (node.position.y + offset[2]) * dungeon.width + node.position.x + offset[1] + 1]
 
             if contains_node(closed_set, neighbour) then
                 goto continue

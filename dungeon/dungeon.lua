@@ -13,6 +13,8 @@ Dungeon = Object:extend()
 local min_boundary_size = 10
 local min_boundary_multipler = 2
 local percent_existing_corridor = 15
+
+-- this scales that display
 local scale = 5
 
 function Dungeon:new(width, height, max_rooms)
@@ -27,23 +29,23 @@ function Dungeon:new(width, height, max_rooms)
 
     self.map_types = enum({"wall","room","corridor"})
 
-    self.grid = {}
+    self.tile = {}
     local count = width * height
 
     while count > 0 do
-        table.insert(self.grid, {
-            grid_type = self.map_types.wall
+        table.insert(self.tile, {
+            tile_type = self.map_types.wall
         })
         count = count - 1
     end
 end
 
 function Dungeon:get_type(x,y)
-    return self.grid[(y*self.width) + (x + 1)].grid_type
+    return self.tile[(y*self.width) + (x + 1)].tile_type
 end
 
 function Dungeon:set_type(x,y, new_type)
-    self.grid[(y*self.width) + (x+1)].grid_type = new_type
+    self.tile[(y*self.width) + (x+1)].tile_type = new_type
 end
 
 function Dungeon:bounds( position )
@@ -128,10 +130,10 @@ function Dungeon:draw_map()
     love.graphics.setPointSize(scale)
     for y = 0, self.height - 1, 1 do
         for x = 0, self.width - 1, 1 do
-            grid_type = self:get_type(x,y)
-            if grid_type == self.map_types.room then
+            tile_type = self:get_type(x,y)
+            if tile_type == self.map_types.room then
                 love.graphics.setColor(255,0,0,255)
-            elseif grid_type == self.map_types.corridor then
+            elseif tile_type == self.map_types.corridor then
                 love.graphics.setColor(0,0,255,255)
             else
                 love.graphics.setColor(0,0,0,255)
@@ -155,7 +157,7 @@ function Dungeon:generate_map()
     for i = 1, #self.containers, 1 do
         local new_room = Room(self.containers[i])
         table.insert(self.rooms, new_room)
-        new_room:update_grid(self)
+        new_room:update_tile(self)
     end
 
     -- Triangulate rooms
@@ -239,13 +241,13 @@ function Dungeon:generate_map()
 --             path_cost.cost = b.position:dist(goal)
 
 --     --        print(b.position)
---             local grid_type = self:get_type(b.position.x, b.position.y)
+--             local tile_type = self:get_type(b.position.x, b.position.y)
 
---             if grid_type == self.map_types.room then 
+--             if tile_type == self.map_types.room then 
 --                 path_cost.cost = path_cost.cost + 10
---             elseif  grid_type == self.map_types.wall then
+--             elseif  tile_type == self.map_types.wall then
 --                 path_cost.cost = path_cost.cost + 5
---             elseif grid_type == self.map_types.corridor then
+--             elseif tile_type == self.map_types.corridor then
 --                 path_cost.cost = path_cost.cost + 1
 --             end
 
@@ -273,7 +275,7 @@ function Dungeon:draw(display)
 
     -- love.graphics.setColor( 255, 0, 0, 255 )
     -- love.graphics.rectangle( "line", container.x, container.y, container.w, container.h )
-    if display.grid then
+    if display.tile then
         self:draw_map()
     else 
         for i = 1, #self.rooms, 1 do

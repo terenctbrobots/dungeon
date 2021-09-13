@@ -9,7 +9,7 @@ local rooms = 22
 
 local display = {
     tri = false,
-    grid = true,
+    tile = true,
     mst = false
 }
 
@@ -27,7 +27,7 @@ function love.draw()
     love.graphics.print('Rooms:'..rooms,520,20)
     love.graphics.print('+ or - to Add/Delete Rooms', 520,60)
     love.graphics.print('t - toggle show trangulation',520, 80)
-    love.graphics.print('g - toggle show grid view/drawn room view',520,100)
+    love.graphics.print('g - toggle show tile view/drawn room view',520,100)
     love.graphics.print('m - toggle show MST',520,120)
     love.graphics.print('r - regenerate dungeon',520, 180)
 end
@@ -58,6 +58,6 @@ function love.keyreleased(key)
     end
 
     if key == 'g' then
-        display.grid =  not display.grid
+        display.tile =  not display.tile
     end
 end

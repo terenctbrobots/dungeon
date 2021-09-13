@@ -37,10 +37,10 @@ function Room:get_center()
     return Point(self.x + math.floor(self.w/2), self.y + math.floor(self.h/2)) 
 end
 
-function Room:update_grid(grid)
+function Room:update_tile(tile)
     for x=0, self.w - 1, 1 do
         for y=0, self.h - 1, 1 do
-            grid:set_type(self.x+x,self.y+y,grid.map_types.room)
+            tile:set_type(self.x+x,self.y+y,tile.map_types.room)
         end
     end
 end

@@ -5,8 +5,8 @@ Rogue like random dungeon generator
 This is a random dungeon generator built around the LOVE2D framework. There are no other dependencies.
 
 The current system generates a series of connected rooms given a width,height and target number of rooms. It does so by:
-1) Doing a BSP inspired subdivision until the required number of container which translate in to rooms are reached
-2) Create random sized rooms in the containers
+1) Doing a BSP inspired subdivision until the required number of bound which translate in to rooms are reached
+2) Create random sized rooms in the bounds
 3) Does a delauney triangulation to find all possible connection(edges)  to each room center
 4) Does a Minimum Spanning Tree(MST) to determine which edges are needed to connect all rooms
 5) Connects each room up using a simple L method so that corridors are angular (There is an alternate A*Star pathfinding routine but it is slow and generates curvy corridors)

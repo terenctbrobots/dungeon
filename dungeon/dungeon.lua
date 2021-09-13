@@ -22,7 +22,7 @@ function Dungeon:new(width, height, max_rooms)
     self.height = height
     self.max_rooms = max_rooms
 
-    self.containers = {[1] = { x = 0, y = 0, w = width, h = height} }
+    self.bounds = {[1] = { x = 0, y = 0, w = width, h = height} }
     self.rooms = {}
     self.points = {}
     self.triangles = nil
@@ -62,41 +62,41 @@ function Dungeon:bounds( position )
 end
 
 function Dungeon:split_vertical()
-    local random_width = math.random(min_boundary_size, self.containers[1].w - min_boundary_size)
-    self.containers[#self.containers+1] = { x = random_width + self.containers[1].x,
-                                  y = self.containers[1].y,
-                                  w = self.containers[1].w - random_width,
-                                  h = self.containers[1].h}
-    self.containers[1].w = random_width
+    local random_width = math.random(min_boundary_size, self.bounds[1].w - min_boundary_size)
+    self.bounds[#self.bounds+1] = { x = random_width + self.bounds[1].x,
+                                  y = self.bounds[1].y,
+                                  w = self.bounds[1].w - random_width,
+                                  h = self.bounds[1].h}
+    self.bounds[1].w = random_width
 end
 
 function Dungeon:split_horizontal()
-    local random_height = math.random(min_boundary_size,self.containers[1].h - min_boundary_size)
-    self.containers[#self.containers+1] = { x = self.containers[1].x,
-                                  y = random_height + self.containers[1].y,
-                                  w = self.containers[1].w,
-                                  h = self.containers[1].h - random_height}
-    self.containers[1].h = random_height
+    local random_height = math.random(min_boundary_size,self.bounds[1].h - min_boundary_size)
+    self.bounds[#self.bounds+1] = { x = self.bounds[1].x,
+                                  y = random_height + self.bounds[1].y,
+                                  w = self.bounds[1].w,
+                                  h = self.bounds[1].h - random_height}
+    self.bounds[1].h = random_height
 end
 
 function Dungeon:split() 
-    -- Sort all container so the biggest is at index 1
-    table.sort(self.containers, function (container1, container2)
-        return (container1.w * container1.h) > (container2.w * container2.h)
+    -- Sort all bound so the biggest is at index 1
+    table.sort(self.bounds, function (bound1, bound2)
+        return (bound1.w * bound1.h) > (bound2.w * bound2.h)
     end)
 
     if love.math.random(1,100) <= 50 then
         -- split vertically
-        if self.containers[1].w > min_boundary_size * min_boundary_multipler then
+        if self.bounds[1].w > min_boundary_size * min_boundary_multipler then
             self:split_vertical()
-        elseif self.containers[1].h > min_boundary_size * min_boundary_multipler then
+        elseif self.bounds[1].h > min_boundary_size * min_boundary_multipler then
             self:split_horizontal()
         end 
     else
         -- split horizontal
-        if self.containers[1].h > min_boundary_size * min_boundary_multipler then
+        if self.bounds[1].h > min_boundary_size * min_boundary_multipler then
             self:split_horizontal()
-        elseif self.containers[1].w > min_boundary_size * min_boundary_multipler then
+        elseif self.bounds[1].w > min_boundary_size * min_boundary_multipler then
             self:split_vertical()
         end    
     end
@@ -146,16 +146,16 @@ end
 
 
 function Dungeon:generate_map()
-    local last_container_count = 0
+    local last_bound_count = 0
     repeat
-        last_container_count = #self.containers
+        last_bound_count = #self.bounds
 
         self:split()
---        print("last container " .. last_container_count .." current " ..#self.containers)
-    until (last_container_count == #self.containers or #self.containers >= self.max_rooms)
+--        print("last bound " .. last_bound_count .." current " ..#self.bounds)
+    until (last_bound_count == #self.bounds or #self.bounds >= self.max_rooms)
 
-    for i = 1, #self.containers, 1 do
-        local new_room = Room(self.containers[i])
+    for i = 1, #self.bounds, 1 do
+        local new_room = Room(self.bounds[i])
         table.insert(self.rooms, new_room)
         new_room:update_tile(self)
     end
@@ -271,10 +271,10 @@ function Dungeon:generate_map()
 end
 
 function Dungeon:draw(display)
-    -- local container = self.containers[container]
+    -- local bound = self.bounds[bound]
 
     -- love.graphics.setColor( 255, 0, 0, 255 )
-    -- love.graphics.rectangle( "line", container.x, container.y, container.w, container.h )
+    -- love.graphics.rectangle( "line", bound.x, bound.y, bound.w, bound.h )
     if display.tile then
         self:draw_map()
     else 

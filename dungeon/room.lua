@@ -1,11 +1,11 @@
 Room = Object:extend()
 
-function Room:new(container)
-    self.x = container.x
-    self.y = container.y
-    self.w = container.w
-    self.h = container.h
-    self.container = container
+function Room:new(bound)
+    self.x = bound.x
+    self.y = bound.y
+    self.w = bound.w
+    self.h = bound.h
+    self.bound = bound
 
     
     -- Fixed resize first
@@ -17,8 +17,8 @@ function Room:new(container)
     local x2 = self.x + self.w
     local y2 = self.y + self.h
 
-    local wall_width = container.w / 3
-    local wall_height = container.h / 3
+    local wall_width = bound.w / 3
+    local wall_height = bound.h / 3
     self.x = self.x + love.math.random(1, wall_width)
     self.y = self.y + love.math.random(1, wall_height)
 
@@ -47,7 +47,7 @@ end
 
 function Room:draw(scale)
     love.graphics.setColor( 0, 255, 0, 255)
-    love.graphics.rectangle("line", self.container.x*scale, self.container.y*scale, self.container.w*scale, self.container.h*scale)
+    love.graphics.rectangle("line", self.bound.x*scale, self.bound.y*scale, self.bound.w*scale, self.bound.h*scale)
     love.graphics.setColor( 255, 0, 0, 255 )
     love.graphics.rectangle( "fill", self.x*scale, self.y* scale, self.w*scale, self.h*scale )
 end

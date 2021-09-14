@@ -40,7 +40,7 @@ end
 function Room:update_tile(tile)
     for x=0, self.w - 1, 1 do
         for y=0, self.h - 1, 1 do
-            tile:setType(self.x+x,self.y+y,tile.map_types.room)
+            tile:setType(self.x+x,self.y+y,Dungeon.tile_types.room)
         end
     end
 end

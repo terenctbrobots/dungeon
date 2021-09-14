@@ -17,6 +17,8 @@ local percent_existing_corridor = 15
 -- this scales that display
 local scale = 5
 
+Dungeon.tile_types = enum({"wall","room","corridor","entrance","exit"})
+
 function Dungeon:new(width, height, max_rooms)
     self.width = width
     self.height = height
@@ -27,14 +29,12 @@ function Dungeon:new(width, height, max_rooms)
     self.points = {}
     self.triangles = nil
 
-    self.map_types = enum({"wall","room","corridor"})
-
     self.tile = {}
     local count = width * height
 
     while count > 0 do
         table.insert(self.tile, {
-            tile_type = self.map_types.wall
+            tile_type = Dungeon.tile_types.wall
         })
         count = count - 1
     end
@@ -59,6 +59,10 @@ function Dungeon:bounds( position )
     end
 
     return true
+end
+
+-- Implement this to query dungeon for location to place unique objects
+function Dungeon:queryTile( filter )
 end
 
 function Dungeon:splitVertical()
@@ -131,9 +135,9 @@ function Dungeon:drawMap()
     for y = 0, self.height - 1, 1 do
         for x = 0, self.width - 1, 1 do
             tile_type = self:getType(x,y)
-            if tile_type == self.map_types.room then
+            if tile_type == Dungeon.tile_types.room then
                 love.graphics.setColor(255,0,0,255)
-            elseif tile_type == self.map_types.corridor then
+            elseif tile_type == Dungeon.tile_types.corridor then
                 love.graphics.setColor(0,0,255,255)
             else
                 love.graphics.setColor(0,0,0,255)
@@ -219,11 +223,13 @@ function Dungeon:generateMap()
 
         for _,node in pairs(path) do
 --            print(node)
-            if self:getType(node.x,node.y) == self.map_types.wall then
-                self:setType(node.x,node.y,self.map_types.corridor)
+            if self:getType(node.x,node.y) == Dungeon.tile_types.wall then
+                self:setType(node.x,node.y,Dungeon.tile_types.corridor)
             end 
         end
-    end
+    end 
+
+    -- place entrance and exit (Might take this outside in the future)
 
     -- Use A star, but it has twisty coordiors
 --     for _, edge in pairs(selected_edges) do
@@ -243,11 +249,11 @@ function Dungeon:generateMap()
 --     --        print(b.position)
 --             local tile_type = self:getType(b.position.x, b.position.y)
 
---             if tile_type == self.map_types.room then 
+--             if tile_type == self.tile_types.room then 
 --                 path_cost.cost = path_cost.cost + 10
---             elseif  tile_type == self.map_types.wall then
+--             elseif  tile_type == self.tile_types.wall then
 --                 path_cost.cost = path_cost.cost + 5
---             elseif tile_type == self.map_types.corridor then
+--             elseif tile_type == self.tile_types.corridor then
 --                 path_cost.cost = path_cost.cost + 1
 --             end
 
@@ -259,8 +265,8 @@ function Dungeon:generateMap()
 
 --         for _,node in pairs(corridorway) do
 -- --            print(node)
---             if self:getType(node.x,node.y) == self.map_types.wall then
---                 self:setType(node.x,node.y,self.map_types.corridor)
+--             if self:getType(node.x,node.y) == self.tile_types.wall then
+--                 self:setType(node.x,node.y,self.tile_types.corridor)
 --             end 
 --         end
 --     end
@@ -271,10 +277,6 @@ function Dungeon:generateMap()
 end
 
 function Dungeon:draw(display)
-    -- local bound = self.bounds[bound]
-
-    -- love.graphics.setColor( 255, 0, 0, 255 )
-    -- love.graphics.rectangle( "line", bound.x, bound.y, bound.w, bound.h )
     if display.tile then
         self:drawMap()
     else 

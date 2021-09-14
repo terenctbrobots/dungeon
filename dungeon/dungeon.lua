@@ -28,6 +28,7 @@ function Dungeon:new(width, height, max_rooms)
     self.rooms = {}
     self.points = {}
     self.triangles = nil
+    self.entrance = Point(0,0)
 
     self.tile = {}
     local count = width * height
@@ -240,9 +241,9 @@ function Dungeon:generateMap()
     end 
 
     -- place entrance and exit (Might take this outside in the future)
-    local entrance_point = self:query()
+    self.entrance =  self:query()
 
-    self:setType(entrance_point.x, entrance_point.y, Dungeon.tile_types.entrance)
+    self:setType(self.entrance.x, self.entrance.y, Dungeon.tile_types.entrance)
 
     -- Use A star, but it has twisty coordiors
 --     for _, edge in pairs(selected_edges) do
@@ -305,7 +306,6 @@ function Dungeon:draw(display)
     if display.mst then
         self:drawMst()
     end
-
 end
 
 function Dungeon:__tostring()

@@ -62,7 +62,15 @@ function Dungeon:bounds( position )
 end
 
 -- Implement this to query dungeon for location to place unique objects
-function Dungeon:queryTile( filter )
+function Dungeon:query( filter )
+    table.sort(self.rooms, function (a,b)
+        local pointA = a:getLowerRight()
+        local pointB = a:getLowerRight()
+        
+        return a.x > b.x and a.y > b.y
+    end)
+
+    return self.rooms[1]:getLowerRight()
 end
 
 function Dungeon:splitVertical()
@@ -137,13 +145,15 @@ function Dungeon:drawMap()
             tile_type = self:getType(x,y)
             if tile_type == Dungeon.tile_types.room then
                 love.graphics.setColor(255,0,0,255)
+                love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
             elseif tile_type == Dungeon.tile_types.corridor then
                 love.graphics.setColor(0,0,255,255)
-            else
-                love.graphics.setColor(0,0,0,255)
+                love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
+            elseif tile_type == Dungeon.tile_types.entrance then
+                love.graphics.setColor(255,255,255,255)
+                love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
             end
 
-            love.graphics.points({x*scale,y*scale})
         end
     end
 end
@@ -161,13 +171,13 @@ function Dungeon:generateMap()
     for i = 1, #self.bounds, 1 do
         local new_room = Room(self.bounds[i])
         table.insert(self.rooms, new_room)
-        new_room:update_tile(self)
+        new_room:updateTile(self)
     end
 
     -- Triangulate rooms
 
     for i = 1, #self.rooms, 1 do
-        self.points[i] = self.rooms[i]:get_center()
+        self.points[i] = self.rooms[i]:getCenter()
     end
 
     self.triangles = delaunay.triangulate(unpack(self.points))
@@ -230,6 +240,9 @@ function Dungeon:generateMap()
     end 
 
     -- place entrance and exit (Might take this outside in the future)
+    local entrance_point = self:query()
+
+    self:setType(entrance_point.x, entrance_point.y, Dungeon.tile_types.entrance)
 
     -- Use A star, but it has twisty coordiors
 --     for _, edge in pairs(selected_edges) do

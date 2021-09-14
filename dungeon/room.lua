@@ -29,15 +29,19 @@ function Room:new(bound)
     self.h = y2 - self.y
 end
 
-function Room:get_vol()
+function Room:getVol()
     return self.w * self.h
 end
 
-function Room:get_center()
+function Room:getCenter()
     return Point(self.x + math.floor(self.w/2), self.y + math.floor(self.h/2)) 
 end
 
-function Room:update_tile(tile)
+function Room:getLowerRight()
+    return Point(self.x + self.w - 1, self.y + self.h - 1)
+end
+
+function Room:updateTile(tile)
     for x=0, self.w - 1, 1 do
         for y=0, self.h - 1, 1 do
             tile:setType(self.x+x,self.y+y,Dungeon.tile_types.room)

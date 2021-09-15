@@ -17,7 +17,7 @@ local percent_existing_corridor = 15
 -- this scales that display
 local scale = 5
 
-Dungeon.tile_types = enum({"wall","room","corridor","entrance","exit"})
+Dungeon.tile_types = enum({"WALL","ROOM","CORRIDOR","ENTRANCE","EXIT"})
 
 function Dungeon:new(width, height, max_rooms)
     self.width = width
@@ -28,14 +28,14 @@ function Dungeon:new(width, height, max_rooms)
     self.rooms = {}
     self.points = {}
     self.triangles = nil
-    self.entrance = Point(0,0)
+    self.ENTRANCE = Point(0,0)
 
     self.tile = {}
     local count = width * height
 
     while count > 0 do
         table.insert(self.tile, {
-            tile_type = Dungeon.tile_types.wall
+            tile_type = Dungeon.tile_types.WALL
         })
         count = count - 1
     end
@@ -144,13 +144,13 @@ function Dungeon:drawMap()
     for y = 0, self.height - 1, 1 do
         for x = 0, self.width - 1, 1 do
             tile_type = self:getType(x,y)
-            if tile_type == Dungeon.tile_types.room then
+            if tile_type == Dungeon.tile_types.ROOM then
                 love.graphics.setColor(255,0,0,255)
                 love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
-            elseif tile_type == Dungeon.tile_types.corridor then
+            elseif tile_type == Dungeon.tile_types.CORRIDOR then
                 love.graphics.setColor(0,0,255,255)
                 love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
-            elseif tile_type == Dungeon.tile_types.entrance then
+            elseif tile_type == Dungeon.tile_types.ENTRANCE then
                 love.graphics.setColor(255,255,255,255)
                 love.graphics.rectangle("fill",x*scale,y*scale,scale,scale)
             end
@@ -234,16 +234,16 @@ function Dungeon:generateMap()
 
         for _,node in pairs(path) do
 --            print(node)
-            if self:getType(node.x,node.y) == Dungeon.tile_types.wall then
-                self:setType(node.x,node.y,Dungeon.tile_types.corridor)
+            if self:getType(node.x,node.y) == Dungeon.tile_types.WALL then
+                self:setType(node.x,node.y,Dungeon.tile_types.CORRIDOR)
             end 
         end
     end 
 
     -- place entrance and exit (Might take this outside in the future)
-    self.entrance =  self:query()
+    self.ENTRANCE =  self:query()
 
-    self:setType(self.entrance.x, self.entrance.y, Dungeon.tile_types.entrance)
+    self:setType(self.ENTRANCE.x, self.ENTRANCE.y, Dungeon.tile_types.ENTRANCE)
 
     -- Use A star, but it has twisty coordiors
 --     for _, edge in pairs(selected_edges) do
@@ -263,11 +263,11 @@ function Dungeon:generateMap()
 --     --        print(b.position)
 --             local tile_type = self:getType(b.position.x, b.position.y)
 
---             if tile_type == self.tile_types.room then 
+--             if tile_type == self.tile_types.ROOM then 
 --                 path_cost.cost = path_cost.cost + 10
---             elseif  tile_type == self.tile_types.wall then
+--             elseif  tile_type == self.tile_types.WALL then
 --                 path_cost.cost = path_cost.cost + 5
---             elseif tile_type == self.tile_types.corridor then
+--             elseif tile_type == self.tile_types.CORRIDOR then
 --                 path_cost.cost = path_cost.cost + 1
 --             end
 
@@ -279,8 +279,8 @@ function Dungeon:generateMap()
 
 --         for _,node in pairs(corridorway) do
 -- --            print(node)
---             if self:getType(node.x,node.y) == self.tile_types.wall then
---                 self:setType(node.x,node.y,self.tile_types.corridor)
+--             if self:getType(node.x,node.y) == self.tile_types.WALL then
+--                 self:setType(node.x,node.y,self.tile_types.CORRIDOR)
 --             end 
 --         end
 --     end

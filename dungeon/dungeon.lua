@@ -65,10 +65,10 @@ end
 -- Implement this to query dungeon for location to place unique objects
 function Dungeon:query( filter )
     table.sort(self.rooms, function (a,b)
-        local pointA = a:getLowerRight()
-        local pointB = a:getLowerRight()
+        local distA = a:getLowerRight():dist(Point(self.width, self.height))
+        local distB = b:getLowerRight():dist(Point(self.width, self.height))
         
-        return a.x > b.x and a.y > b.y
+        return distA < distB
     end)
 
     return self.rooms[1]:getLowerRight()
